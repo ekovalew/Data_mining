@@ -25,37 +25,33 @@ def data_mining_hh(vac):
     vac_name1 = vac.find('div', {'class': 'vacancy-serp-item__info'})
     vac_l = vac_name1.find('span', {'class': 'g-user-content'})
     vac_link = vac_l.findChild()['href']
+    if not vac.find('a', {'class': 'bloko-link bloko-link_secondary'}) is None:
+        company = vac.find('a', {'class': 'bloko-link bloko-link_secondary'}).getText()
+    else:
+        company = 'None'
     vac_salary = vac.find('div', {'class': 'vacancy-serp-item__sidebar'}).getText().lower()
-    c = vac_salary.find('от')
-    d = vac_salary.find('-')
-    x = vac_salary.find('до')
     if vac_salary.find('-') > 0:
-        res = re.findall(r'[0-9]\d{0,}', vac_salary)
-        if len(res) == 4:
-            min = res[0] + res[1]
-            max = res[2] + res[3]
-            min = int(min)
-            max = int(max)
-        elif len(res) == 2:
-            min = int(res[0] + res[1])
-            max = 'Nan'
-        else:
-            min = 'Nan'
-            max = 'Nan'
+        res = re.findall(r'[\d+\s]*\d+', vac_salary)
+        res[0] = res[0].replace('\xa0', '')
+        res[1] = res[1].replace('\xa0', '')
+        min = int(res[0])
+        max = int(res[1])
         val = re.findall(r'[а-яa-z]\w{2,}', vac_salary)
         if val != []:
             val = val[0]
     elif vac_salary.find('от') == 0:
-        res = re.findall(r'[0-9]\d{0,}', vac_salary)
-        min = res[0] + res[1]
+        res = re.findall(r'[\d+\s]*\d+', vac_salary)
+        res[0] = res[0].replace('\xa0', '')
+        min = int(res[0])
         max = 'Nan'
         val = re.findall(r'[а-яa-z]\w{2,}', vac_salary)
         if val != []:
             val = val[-1]
     elif vac_salary.find('до') == 0:
-        res = re.findall(r'[0-9]\d{0,}', vac_salary)
+        res = re.findall(r'[\d+\s]*\d+', vac_salary)
+        res[0] = res[0].replace('\xa0', '')
         min = 'Nan'
-        max = res[0] + res[1]
+        max = int(res[0])
         val = re.findall(r'[а-яa-z]\w{2,}', vac_salary)
         if val != []:
             val = val[0]
@@ -63,7 +59,7 @@ def data_mining_hh(vac):
         val = 'None'
         min = 'None'
         max = 'None'
-    return vac_name, min, max, val, resursHH, vac_link
+    return vac_name, min, max, val, company, resursHH, vac_link
 
 def data_mining_sj(vac):
     min = 'None'
@@ -77,49 +73,46 @@ def data_mining_sj(vac):
     if not vac_l is None:
         vac_link = main_link2SJ + vac_l.findChild()['href']
     if not vac_name is None:
+        vac_comp = vac_name.find_parent().find_parent().next_sibling()
+        if not vac_comp[0].find('a') is None:
+            company = vac_comp[0].find('a').getText()
+        else:
+            company = 'None'
         vac_name = vac_name.getText()
         a = 0
         if vac_name == 'Инженер-программист С++ Qt (GUI)':
             a = 1
         vac_salary = vac_salary.getText().lower()
-        c = vac_salary.find('от')
-        d = vac_salary.find('по договорённости')
-        x = vac_salary.find('до')
         if vac_salary.find('по договорённости') == 0:
             min = 'None'
             max = 'None'
             val = 'None'
         elif vac_salary.find('—') > 0:
-            res = re.findall(r'[0-9]\d{0,}', vac_salary)
-            if len(res) == 4:
-                min = res[0] + res[1]
-                max = res[2] + res[3]
-                min = int(min)
-                max = int(max)
-            elif len(res) == 2:
-                min = int(res[0] + res[1])
-                max = 'Nan'
-            else:
-                min = 'Nan'
-                max = 'Nan'
+            res = re.findall(r'[\d+\s]*\d+', vac_salary)
+            res[0] = res[0].replace('\xa0', '')
+            res[1] = res[1].replace('\xa0', '')
+            min = int(res[0])
+            max = int(res[1])
             val = re.findall(r'[а-яa-z]\w{2,}', vac_salary)
             if val != []:
                 val = val[0]
         elif vac_salary.find('от') >= 0:
-            res = re.findall(r'[0-9]\d{0,}', vac_salary)
-            min = res[0] + res[1]
+            res = re.findall(r'[\d+\s]*\d+', vac_salary)
+            res[0] = res[0].replace('\xa0', '')
+            min = int(res[0])
             max = 'Nan'
             val = re.findall(r'[а-яa-z]\w{2,}', vac_salary)
             if val != []:
                 val = val[0]
         elif vac_salary.find('до') >= 0:
-            res = re.findall(r'[0-9]\d{0,}', vac_salary)
+            res = re.findall(r'[\d+\s]*\d+', vac_salary)
+            res[0] = res[0].replace('\xa0', '')
             min = 'Nan'
-            max = res[0] + res[1]
+            max = int(res[0])
             val = re.findall(r'[а-яa-z]\w{2,}', vac_salary)
             if val != []:
                 val = val[0]
-        return vac_name, min, max, val, resursSJ, vac_link
+        return vac_name, min, max, val, company, resursSJ, vac_link
 
 # HH.ru
 pager_nextHH = soupHH.find('a',{'data-qa':'pager-next'})
