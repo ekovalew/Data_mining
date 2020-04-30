@@ -27,26 +27,6 @@ class SJruSpider(scrapy.Spider):
         salary1 = response.xpath("//span[@class='_3mfro _2Wp8I ZON4b PlM3e _2JVkc']/text()").extract()
         sal = ' '.join(salary1)
         link = response.url
-
-        if sal.find('По договорённости') != -1:
-            salary_min = 'None'
-            salary_max = 'None'
-        elif sal.find('от') == -1 and sal.find('до') == -1:
-            salary_min = salary1[0]
-            salary_max = salary1[1]
-            salary_min = salary_min.replace('\xa0', '')
-            salary_min = salary_min.replace('руб.', '')
-            salary_max = salary_max.replace('\xa0', '')
-            salary_max = salary_max.replace('руб.', '')
-        elif sal.find('от') != -1 and len(salary1) < 5:
-            salary_min = salary1[2]
-            salary_min = salary_min.replace('\xa0', '')
-            salary_min = salary_min.replace('руб.', '')
-            salary_max = 'None'
-        elif sal.find('до') != -1 and len(salary1) < 5:
-            salary_min = 'None'
-            salary_max = salary1[2]
-            salary_max = salary_max.replace('\xa0', '')
-            salary_max = salary_max.replace('руб.', '')
         site = 'superjob.ru'
-        yield JobparserItem(name=name1[0], salary_min=salary_min, salary_max=salary_max, link=link, site=site)
+        yield JobparserItem(name=name1[0], salary1=salary1, link=link, site=site)
+
