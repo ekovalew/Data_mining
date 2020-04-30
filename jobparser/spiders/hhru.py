@@ -22,30 +22,12 @@ class HhruSpider(scrapy.Spider):
         for link in vacancy_links:
             yield response.follow(link, callback=self.vacancy_parce)
 
-    def vacancy_parce(self, response:HtmlResponse):
+    def vacancy_parce(self, response: HtmlResponse):
         name1 = response.css("div.vacancy-title h1::text").extract_first()
         salary1 = response.xpath("//span[@class='bloko-header-2 bloko-header-2_lite']/text()").extract()
-        sal = ' '.join(salary1)
         link = response.url
-        a=0
-        if link == 'https://hh.ru/vacancy/36782074?query=java':
-            a=1
-        if sal.find('з/п не указана') != -1:
-            salary_min = 'None'
-            salary_max = 'None'
-        elif len(salary1) >= 6:
-            salary_min = salary1[1]
-            salary_max = salary1[3]
-            salary_min = salary_min.replace('\xa0', '')
-            salary_max = salary_max.replace('\xa0', '')
-        elif sal.find('от') != -1 and len(salary1) < 6:
-            salary_min = salary1[1]
-            salary_min = salary_min.replace('\xa0', '')
-            salary_max = 'None'
-        elif sal.find('до') != -1 and len(salary1) < 6:
-            salary_min = 'None'
-            salary_max = salary1[1]
-            salary_max = salary_max.replace('\xa0', '')
+        a = 0
         site = 'hh.ru'
-        yield JobparserItem(name=name1, salary_min=salary_min, salary_max=salary_max, link=link, site=site)
+        yield JobparserItem(name=name1, salary1=salary1, link=link, site=site)
+
 
