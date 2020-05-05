@@ -24,7 +24,12 @@ class LMparserPipeline(object):
 
 
 class LMPhotosPipeline(ImagesPipeline):
+
     def get_media_requests(self, item, info):
+        global link_to_name
+        link_to_name = {}
+        for link in item['photos']:
+            link_to_name[link] = item['name']
         if item['photos']:
             for img in item['photos']:
                 try:
@@ -42,9 +47,11 @@ class LMPhotosPipeline(ImagesPipeline):
             item['photos'] = [itm[1] for itm in results if itm[0]]
        return item
 
-    def RequestP(self, param):
-       pass
 
     #def file_path(self, request, response=None, info=None):
-    #    url = request.url
-    #    return 'full'
+    #    directory_name = link_to_name[request.url]
+    #    image_name = str(request.url).split('/')[-1]
+    #    image_name = image_name[:image_name.find('.')]
+    #    head_directory = self.spiderinfo.spider.name
+    #    file_name = f'{head_directory}/{directory_name}/{image_name}.jpg'
+    #    return file_name
